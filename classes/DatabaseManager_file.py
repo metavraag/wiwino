@@ -18,11 +18,10 @@ class DatabaseManager:
         self.conn.close()
     
     def create_table_links(self, table_name):
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} (
+        query = f"""CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             link TEXT NOT NULL UNIQUE
-            )"
+            )"""
         self.execute(query)
         self.conn.commit()
-    
     
