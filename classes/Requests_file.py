@@ -1,6 +1,20 @@
 import requests
 import json
 
+def extract_keys(val, keys_set=None):
+    if keys_set is None:
+        keys_set = set()
+
+    if isinstance(val, dict):
+        for key in val.keys():
+            keys_set.add(key)
+            extract_keys(val[key], keys_set)
+    elif isinstance(val, list):
+        for item in val:
+            extract_keys(item, keys_set)
+
+    return keys_set
+
 url = "https://www.vivino.com/api/regions?cache_key=446940327868b531465e78484b883dd2dddb7fe41e7644a1d54c&language=en"
 
 payload = {}
@@ -26,5 +40,7 @@ headers = {
 
 response = requests.request("GET", url, headers=headers, data=payload)
 
-print(response.text)
-print(len(response.text))
+print(extract_keys(json.loads(response.text)))
+# save the response to a file
+with open('wine.json', 'w', encoding='utf-8') as f:
+    f.write(response.text)
