@@ -49,3 +49,7 @@ class ScraperClass:
             if new_height == last_height:
                 break
             last_height = new_height
+    def get_links(self):
+        elements = self.driver.find_elements_by_css_selector('.anchor_anchor__m8Qi- wineCard__cardLink--3F_uB')
+        links = [element.get_attribute('href') for element in elements]
+        return links
