@@ -19,9 +19,11 @@ class ScraperClass:
     def scrape(self, url):
         self.driver.get(url)
         self.accept_cookies()
-        self.infinite_scroll()
+        # self.infinite_scroll()
         time.sleep(5)
+        links = self.get_links()
         self.driver.quit()
+        return links
 
     def accept_cookies(self):
         try:
@@ -50,6 +52,9 @@ class ScraperClass:
                 break
             last_height = new_height
     def get_links(self):
-        elements = self.driver.find_elements_by_css_selector('.anchor_anchor__m8Qi- wineCard__cardLink--3F_uB')
-        links = [element.get_attribute('href') for element in elements]
-        return links
+        elements = self.driver.find_elements_by_css_selector('div.wineCard__wineCard--2dj2T.wineCard__large--1tkVl')
+        try:
+            links = [element.get_attribute('href') for element in elements]
+            return links
+        except Exception as e:
+            print(e)
