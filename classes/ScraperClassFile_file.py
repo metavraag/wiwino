@@ -51,10 +51,7 @@ class ScraperClass:
             if new_height == last_height:
                 break
             last_height = new_height
+
     def get_links(self):
-        elements = self.driver.find_elements_by_css_selector('div.wineCard__wineCard--2dj2T.wineCard__large--1tkVl')
-        try:
-            links = [element.get_attribute('href') for element in elements]
-            return links
-        except Exception as e:
-            print(e)
+        elements = self.driver.find_elements(By.CSS_SELECTOR, 'a[data-testid="vintagePageLink"]')
+        return [element.get_attribute('href') for element in elements]
