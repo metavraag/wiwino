@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 import time
 
+
 class ScraperClass:
     def __init__(self, headless=False):
         # setup the selenium browser
@@ -28,7 +29,7 @@ class ScraperClass:
     def accept_cookies(self):
         try:
             element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, 'didomi-notice-agree-button'))
+                EC.presence_of_element_located((By.ID, "didomi-notice-agree-button"))
             )
             element.click()
         except TimeoutException:
@@ -41,7 +42,9 @@ class ScraperClass:
 
         while True:
             # Scroll down to bottom
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            self.driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
 
             # Wait to load page
             time.sleep(3)
@@ -52,6 +55,12 @@ class ScraperClass:
                 break
             last_height = new_height
 
-    def get_links(self):
-        elements = self.driver.find_elements(By.CSS_SELECTOR, 'a[data-testid="vintagePageLink"]')
-        return [element.get_attribute('href') for element in elements]
+    def get_title(self):
+        try:
+            element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "winery"))
+            )
+            return element.text
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
