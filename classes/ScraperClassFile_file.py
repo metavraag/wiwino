@@ -143,44 +143,28 @@ class ScraperClass:
             return None
 
     def check_type_page(self):
-        try:
-            promo_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located(
-                    (
-                        By.CLASS_NAME,
-                        "purchaseAvailability__row--S-DoM purchaseAvailability__prices--1WNrU",
-                    )
-                )
-            )
-            return "promo"
-        except TimeoutException:
-            pass
+        elements = [
+            (
+                By.CLASS_NAME,
+                "purchaseAvailability__row--S-DoM purchaseAvailability__prices--1WNrU",
+                "promo",
+            ),
+            (By.CLASS_NAME, "purchaseAvailabilityPPC__icon--3t84F", "average"),
+            (
+                By.CLASS_NAME,
+                "purchaseAvailabilityPPC__betterValueSentence--3OMTX",
+                "no price",
+            ),
+        ]
 
-        try:
-            price_average_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located(
-                    (
-                        By.CLASS_NAME,
-                        "purchaseAvailabilityPPC__icon--3t84F",
-                    )
+        for by, value, page_type in elements:
+            try:
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((by, value))
                 )
-            )
-            return "average"
-        except TimeoutException:
-            pass
-
-        try:
-            no_price_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located(
-                    (
-                        By.CLASS_NAME,
-                        "purchaseAvailabilityPPC__betterValueSentence--3OMTX",
-                    )
-                )
-            )
-            return "no price"
-        except TimeoutException:
-            pass
+                return page_type
+            except TimeoutException:
+                pass
 
         return None
 
