@@ -50,7 +50,7 @@ class ScraperClass:
 
     def accept_cookies(self):
         try:
-            element = WebDriverWait(self.driver, 10).until(
+            element = WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.ID, "didomi-notice-agree-button"))
             )
             element.click()
