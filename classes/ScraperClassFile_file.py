@@ -20,12 +20,20 @@ class ScraperClass:
     def scrape(self, url):
         self.driver.get(url)
         self.accept_cookies()
-        # self.infinite_scroll()
-        winery = self.get_wine_info()
-        ratings = self.get_ratings()
-        average_price = self.get_price_average()
+        page_type = self.check_type_page()
+
+        if page_type == "promo":
+            price = self.get_price_promo()
+        elif page_type == "average":
+            price = self.get_price_average()
+        elif page_type == "no price":
+            price = None
+        else:
+            print("Unknown page type")
+            price = None
+
         self.driver.quit()
-        return average_price
+        return price
 
     def accept_cookies(self):
         try:
@@ -128,6 +136,48 @@ class ScraperClass:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
+
+    def check_type_page(self):
+        try:
+            promo_element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (
+                        By.CLASS_NAME,
+                        "purchaseAvailability__row--S-DoM purchaseAvailability__prices--1WNrU",
+                    )
+                )
+            )
+            return "promo"
+        except TimeoutException:
+            pass
+
+        try:
+            price_average_element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (
+                        By.CLASS_NAME,
+                        "purchaseAvailabilityPPC__icon--3t84F",
+                    )
+                )
+            )
+            return "average"
+        except TimeoutException:
+            pass
+
+        try:
+            no_price_element = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (
+                        By.CLASS_NAME,
+                        "purchaseAvailabilityPPC__betterValueSentence--3OMTX",
+                    )
+                )
+            )
+            return "no price"
+        except TimeoutException:
+            pass
+
+        return None
 
     def get_price_promo(self):
         try:
