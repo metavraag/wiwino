@@ -29,5 +29,5 @@ print(url3)
 vivino = ScraperClass(headless=True)
 
 # Now call the scrape method
-scraped_object = vivino.scrape(url2)
+scraped_object = vivino.scrape(url1)
 print(scraped_object)

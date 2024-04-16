@@ -4,7 +4,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver import Firefox
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
@@ -14,23 +13,12 @@ import time
 class ScraperClass:
     def __init__(self, headless=False):
         # setup the selenium browser
-        self.profile = FirefoxProfile(
-            "C:\\Users\\Administrator\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\2m3jwx4d.dev-edition-default"
-        )
-        print("Using Firefox Developer Edition profile")
-
         self.options = Options()
-        self.options.profile = self.profile
-        self.options.binary_location = (
-            "C:\\Program Files\\Firefox Developer Edition\\firefox.exe"
-        )
-
-        # Set the headless option to True
-        if headless:
-            self.options.add_argument("-headless")
+        self.options.headless = headless
 
         try:
-            self.driver = Firefox(options=self.options)
+            # Make sure the path to your chromedriver is correct
+            self.driver = webdriver.Chrome(options=self.options)
         except Exception as e:
             print(f"An error occurred while initializing the webdriver: {e}")
             raise e
