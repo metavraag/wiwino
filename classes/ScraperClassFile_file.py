@@ -23,9 +23,8 @@ class ScraperClass:
             print(f"An error occurred while initializing the webdriver: {e}")
             raise e
 
-    def scrape(self, url, tab_name):
-        self.driver.execute_script(f"window.open('{url}', '{tab_name}');")
-        self.driver.switch_to.window(tab_name)
+    def scrape(self, url):
+        self.driver.get(url)
         self.accept_cookies()
         page_type = self.check_type_page()
 
@@ -45,10 +44,6 @@ class ScraperClass:
         result = {"price": price, "wine_info": wine_info, "ratings": ratings}
 
         return result
-
-    def close_tab(self, tab_name):
-        self.driver.switch_to.window(tab_name)
-        self.driver.close()
 
     def quit_driver(self):
         self.driver.quit()
