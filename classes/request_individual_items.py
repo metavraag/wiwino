@@ -1,5 +1,6 @@
 import requests
 import json
+from ScraperClassFile_file import ScraperClass
 
 
 def get_id(json_name):
@@ -20,3 +21,10 @@ url2 = construct_url(1606)
 
 print(url1)
 print(url2)
+
+# Create an instance of ScraperClass
+vivino = ScraperClass()
+
+# Now call the scrape method
+scraped_object = vivino.scrape(url1)
+print(scraped_object)

@@ -20,11 +20,11 @@ class ScraperClass:
     def scrape(self, url):
         self.driver.get(url)
         self.accept_cookies()
-        # self.infinite_scroll()
-        time.sleep(5)
-        links = self.get_links()
+        self.infinite_scroll()
+        winery = self.get_winery()
         self.driver.quit()
-        return links
+        # time.sleep(5)
+        return winery
 
     def accept_cookies(self):
         try:
@@ -55,7 +55,7 @@ class ScraperClass:
                 break
             last_height = new_height
 
-    def get_title(self):
+    def get_winery(self):
         try:
             element = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "winery"))
