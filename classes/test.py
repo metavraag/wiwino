@@ -2,24 +2,21 @@ import requests
 import json
 
 
-# This function prints out all the keys found in a nested dictionary in a recursive way.
-def extract_keys(val, keys_set=None):
-    if keys_set is None:
-        keys_set = set()
-
-    if isinstance(val, dict):
-        for key in val.keys():
-            keys_set.add(key)
-            extract_keys(val[key], keys_set)
-    elif isinstance(val, list):
-        for item in val:
-            extract_keys(item, keys_set)
-
-    return keys_set
+def get_ids(json_name):
+    # read the json file
+    with open(json_name, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    # return all ids
+    return [region["id"] for region in data["regions"]]
 
 
-# Make the request to the hidden api.
-url = "https://www.vivino.com/api/regions?cache_key=446940327868b531465e78484b883dd2dddb7fe41e7644a1d54c&language=en"
+def construct_url(id):
+    base_url = "https://www.vivino.com/BE/en/w/"
+    full_url = str(base_url) + str(id)
+    return full_url
+
+
+url = "https://www.vivino.com/api/wines/11044497/tastes?language=en"
 
 payload = {}
 headers = {
@@ -27,25 +24,20 @@ headers = {
     "Accept": "application/json",
     "Accept-Language": "en-US,en;q=0.5",
     "Accept-Encoding": "gzip, deflate, br",
-    "Referer": "https://www.vivino.com/explore?e=eJzLLbI1VMvNzLM1UMtNrLA1NTBQS660dXJVS7Z1DQ1SKwDKpqfZliUWZaaWJOao5Rel2KakFier5SdV2ialFpfEF2QmZxerlZdExwKVgikjCGUMoUwglDlUzgQALX0lDQ^%^3D^%^3D",
+    "Referer": "https://www.vivino.com/BE/en/la-pruina-ilmo-riserva-primitivo-di-manduria/w/2978?year=2020&price_id=35555237",
     "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
-    "Alt-Used": "www.vivino.com",
     "Connection": "keep-alive",
-    "Cookie": "first_time_visit=38Tmwio2VBRJ2tIfD3n23P8n7yhaXOU1tx^%^2FWpAHZnHcxZqnz3dP7RevKJTCDBjr8oe^%^2FwUPjEMF37EUlf3DdcQSNWYTH4^%^2FoepCcSrSZAXiFzaRSyzH^%^2BJeYTh8HAMW7KjLAcA^%^3D--31^%^2BsMNZKfe7PMrld--YXG66heDIgXVpfhxbkGyGw^%^3D^%^3D; anonymous_tracking_id=2gQtDW4a110zkQKgNT0x3tCMhWBpGnJTjmEZEdT6NCdTkIbd6EGaXPAYiNrv8tLi^%^2B7kBiNdZQPLfyQE7i0GlrQpZK7V^%^2FbhhBTR4siKwW4tammN0TLNBXplLrOVm5LydD5GGx^%^2FmKBmtaQMUdDSxEQpQNyxdHy96FFXL8aYoSaCTUinoFXiwHj5eBoL4F1^%^2BlSxHMnH--DQ^%^2FON8hZp52che0n--n1QJEVQuC2pJuRJYh9Ck^%^2BQ^%^3D^%^3D; client_cache_key=lMZIAP1zy8TgpOqAYHUIwyfNf^%^2FPmHEdZjPkKC^%^2BU2prvVHLLIGa0Uqr7hktVCL^%^2FQnxE^%^2BgvgqOdL7YGA8XvZDIf9j82vj^%^2FumfsY3E5uNRM9Hn7BxBYTmBT16YebKBaCwHHISSf2zgtgKtSFuLnnMpu47Vw--QvYvdJzw7DNCGIxL--6JHrpCgjAv8HsMvte4hqbA^%^3D^%^3D; csrf_token=d9JZgZCbikbzzo3D2R0H9okplF39eSK09ESttjdOoEABfv04ZytMpPxZSlIQFDT7Ep8xYfjE4kB3OH26CTLy3w; _ruby-web_session=sidtgEe^%^2FCFLmc9dRiQ^%^2BEkrJQigG0Dw9uC4dSmy6SstOFVQHCBAXah49rKxFzrm^%^2Fq^%^2BRCBu3PVZX8auV1O4eBzMQT68x4cz0P1fJIO8rDC3dKxGJeP4Eg5NfS^%^2FQUt6Vf1iCT5YsPFbIOQE7MtPI99dxjd2BFYo6d7FhEh47SEAPwlfdBI4bvsW1N5^%^2Fkh^%^2FkYb^%^2B9ZEpUxeQfqnNYnOUkZlWBI5UOQJZkwvhoyhr8QAtspP6^%^2Ff5hwu07^%^2BIQTjA^%^2FrUzYn78T6yYyHVyeyZCcb54gh0PpDC^%^2B7X7idnLThkWnoqjTmbmlYdQ7rLR^%^2FTSEuTy5nZrGT7dlvkCWbc0uW65OT^%^2FcQw^%^2BXoYS30b9nAaN1qODc^%^2B9Ifa^%^2Bz6v7ZaMSFxAYRYM6tzHqKDfekihZx4X5qqr5lBvfLW5bp^%^2FgDbqKvqX3VrETq^%^2FHIXcw^%^3D--Q4nxh^%^2FHKr6JthcPQ--9Tfus5yEyHTleUovX7Y^%^2BKA^%^3D^%^3D; eeny_meeny_personalized_upsell_module_v2=ytfRyykU09EQE3cY3KGPXVpH5onaIKjR5m^%^2F29EOEHxseyCTuk2^%^2FDKWmBrOID^%^2B2QswT5pAc^%^2BarC^%^2B248ihJGc6gw^%^3D^%^3D; didomi_token=eyJ1c2VyX2lkIjoiMThlZTEwYjUtMWMwYi02N2JiLWI3NjQtMDAzODViNzVkZmY1IiwiY3JlYXRlZCI6IjIwMjQtMDQtMTVUMDk6MTY6MzkuMjMyWiIsInVwZGF0ZWQiOiIyMDI0LTA0LTE1VDA5OjE2OjQyLjUwNFoiLCJ2ZW5kb3JzIjp7ImRpc2FibGVkIjpbImdvb2dsZSIsImFtYXpvbiIsImM6bWl4cGFuZWwiLCJjOmltcGFjdCIsImM6c3RlZWwtaG91c2UtbWVkaWEiLCJjOmdvb2dsZWFuYS00VFhuSmlnUiJdfSwicHVycG9zZXMiOnsiZGlzYWJsZWQiOlsiZGV2aWNlX2NoYXJhY3RlcmlzdGljcyIsImdlb2xvY2F0aW9uX2RhdGEiXX0sInZlbmRvcnNfbGkiOnsiZGlzYWJsZWQiOlsiZ29vZ2xlIiwiYzptaXhwYW5lbC0zMnFpRVlEcCIsImM6aGVhcC15N0VKcnpraSJdfSwicHVycG9zZXNfbGkiOnsiZGlzYWJsZWQiOlsiZGV2aWNlX2NoYXJhY3RlcmlzdGljcyIsImdlb19hZHMiXX0sInZlcnNpb24iOjIsImFjIjoiQUFBQS5BQUFBIn0=; euconsent-v2=CP9HEwAP9HEwAAHABBENAvEgAAAAAAAAAAZQAAAAAAAA.YAAAAAAAAAAA; recently_viewed=yLZjKKcLuBSidvhr9D1OIIEoM7jMoNMT^%^2Fsln7tNe82F2HdPM68cjr6^%^2BhXCAIvmTAUOFaCZgSZPaGSY0pTq2FV7w596snmXtw0jLG^%^2FF6NWr5jCJBiehY3D22nR3kSnGi7QaH5vuLo0RlYKThILO3Xw2^%^2FzIYSNcFcV5DMA5tBKEIQuN^%^2BXvPevpNu7N9R8Z09kolbC34r75kNkT4yuUNKETVo^%^2ByNDcvZn34tbDo5bKyV1bMN3V5P1wpxPRf2g4Fu^%^2F4BLEwd9a3PA1M8trpme6N5e6wRfTlIbYu2WSjcpDjQNWASurtikRo^%^2FZ^%^2Bvt2p5KbE6f^%^2FyxxZhQPN8EfZMBtqPnIG0gbGey89K5m^%^2BtSipPMHXUPRNSmmf9^%^2F5AX9D4ROAV5GJbunco3O1Yf^%^2FgcHwAsOogJI3V1GDMeZ^%^2Fht4e0OMIPa33o7aLCKAKVeS3uQ1AeA2CCtADg^%^2BmQzfr33VxYK^%^2BAfjTYhhPXcW6drZ9Mw0YMEM^%^2BLmjCDpMpZj7K9NbLG5HzPKsg1bcXlNTpBNXtzgZ^%^2Bhb4Oxg^%^3D--ARuxgIhvkMC6mAVq--mE8eHg4oJoD^%^2F1V7CN0aaZw^%^3D^%^3D; _ruby-web_session=i3E%2B7%2BQGDyQFvb18wE0KYqm8T2FuUUohO7jWmXZdFbxNeDf4sLZ2F%2B8DOcX9xSnMROhZ6U92V%2FXEca5oHNLsHdeA6a7X%2FCHJArNp4t2hh2jddRz%2FMr5%2B9R97KeU5KzlEPJpEsRbZZbFDROMKEV%2F2xUmtIZJgIppnCzLYhN7Fa6nCYajPHxrLK2SP2c9pfVOF0oxexqsbyBbAZmLGJOCf8OXqAnr5x4ygaT%2BjZQPx%2BwkhJldkeLUnrQVZft87iELrKOE1K9DiAszO7AAkIXv4GgavF5k9S5dM0qrVRLLMqjiT39LNwCryNUCggJwpsWOKQqQGd410kMx6ZbIgQRjwVTCsNmW7PClZ8vo2TFpdrhqb64hkuzt%2BOKsQcUPkF63gxjV4SpT4EKWYQ%2Fo%3D--CPTZ33Lsus95PJMm--ds95H6wPlaXTXVokTQv5VA%3D%3D; anonymous_tracking_id=jb1qRxZgoAK4uSDztkfT0yy8SMt9DAgrSDtFdx3uEy7WG7TAauyXCNwLtHoUvKwyMv6ymCxwPTMrRqTxyE0gDaeF5FX2t6gwa8i0RDgF%2B4lqryw6XbI811pmgS9TRwdVBTq7oGOsuGv6F89dildZU8NDzFd0AhR5BMyRULJs5XWfF3QmLgIfwl7Gt4aE9ap%2FEpBY--%2FvRb2KXPtvRCTQfe--S5xC09sxWK7PROP2S8FesQ%3D%3D; client_cache_key=PI6I1E0h8wGevBhIio664X5IbvDM%2Fw8lTs6H5upAuO4YOjippd%2BNdqGDTH6Yt%2F73z%2B7tV0gwWhUBjYvw%2F4suHOl%2FZ4PmDqEyW01mLzfVlqMGYw%2F8O31uxgD%2Bk2013DQklLc4OVfvROqFo8Vu6xoiS2%2B%2B--HAinzTPQaxq%2FxRku--ovxLRFcI8kqNxaaR1v99eQ%3D%3D; csrf_token=nFeYypzveID7PR8pdLmYSObeZQyLOZW66jjFxryujMxmtt1cgm13h1OAQeScX9BQTaYIU8NAiJ9BzJyIA92NGQ; eeny_meeny_personalized_upsell_module_v2=APMFYVwXN2Zx0oLHisMQvRLVCywNJoOa2SAD51xzB%2F2M0G%2BoNCLLdYajQ%2BnhAELCsGCGirmJ6L%2Baz0QlYVyOsg%3D%3D; first_time_visit=GiBIZABJmCWPVYxB60HySFKnn%2F8a4Hwx8a7iD4VRYY1DVrJqZA%2BMHlBZnZIe36avMkgT2zCBt1XiEkbT2tmvV7%2FrtvqQhRanM%2BtTMtDFYF9RzpX1XtM3%2FfxvDeiz3MJ9CPw%3D--iq%2FzCRwd1BCMu9x7--uh5qIFGbcabKHHeurS%2FDtw%3D%3D",
+    "Cookie": "first_time_visit=nhEBt4Z7LMxQd6dqfkA82QCLuP3XSiZNIz1R4Kc^%^2B^%^2BDVpnSa6cWJXICjByS5l25n2HQmd3^%^2FIdL6^%^2FHEcChICw6x^%^2BS76ZZSfYItut07Zbkq54neoeKDC^%^2BJVTOAsFdzRD7QhD4Q^%^3D--zETTaXjLIbPj46vz--Qqaxgxgub^%^2BL2y7IJVy^%^2F2TQ^%^3D^%^3D; anonymous_tracking_id=AiQqXnm46ZAJfz8u5MSFKVnIEcFBlAZkxvY2HPJuzhhYGNPIdXf^%^2BQ^%^2BwUo^%^2F58OM6OpjA8bfTS4ArZm8NQdTE^%^2Fg^%^2FIxXqorrsQim9dal2x^%^2Br0vF1CgC6zQehFZwXKQie4IISzf8DBJrx5F2DHTtFT6GJgPpDvcQv6CpkQoMbfPnPfV0Ozk^%^2B2^%^2BC3MiYCnskJRDZrZneJ--kgy^%^2FI^%^2BCR1sC0WFkW--nGdTDIEqiHxtkESD5or6^%^2BQ^%^3D^%^3D; client_cache_key=EZ^%^2Bxz^%^2BYVANw0pGTQKuHT1nuxLB4^%^2BxHzE8AVqMHDnEqFmDrmBk17xz6oKkH2pSXFzZdXTO8qWBqkPsdn8yB43X8P1kv8b3IJVXeFi^%^2FDntB5Jc3OXwe3swmCg9j^%^2BksBfBZmIZ^%^2BAAG49UA2Et8BPMsniLRc--jZ2xv66ZdHLBAHiL--c7ixiTn6OjZdgfbJyJjMmw^%^3D^%^3D; csrf_token=BU1glx9_weK_3-bPFm57X0PzEP5vbc13n77Aq-Ig3p_NLHdMY1AiUV7czqmfGwRq8I7pYyKhluKhuYcWoAm0TA; _ruby-web_session=^%^2Bff1mOM7u7He3zE0Lcuw19EcSCzYOjdwgQC6ZZcxlocEWwbkH5IzHt0PgHnjeJCqSy22LDisru^%^2FP6X6dCEJzUFujmlwwRcneHyeh3Z5erJrbCVdI8RKBdcQRcD68ttsOwZ7yCDIDrGZbj5NIAM2U4Nsx^%^2BugIDxyDCN^%^2FlcslSgDwaBnSUpsCKB4c3k1hgQa07kWUM4cvgnOg97DkeDcXKDV4InNEkx4PhzPE7SMSQE4MLys7n0cIT2PGOW7nydNIO0riOAdPlV^%^2Fo8oQ2r1^%^2FySZ^%^2BrkZfL3I75AW5VSk2XdYpkEQOQdTGTmDhmdh9vosQ1VkRVFhazUlRmWxE^%^2BnjpqNMQ4md0sJFOZBt4y0rnEE2a28Bu088KUCgv0XMMxAOsEkrVmFxysu^%^2BcKdHhM3tCAAqhqeuVRO9me1481^%^2BJ8K5S9lzlXr6GLbuZWFDilIrVwVKgRYTV0LTEnqIW7BEiinOBir3BZJoHXGcOMJDJ0vxyZTyxMnA8U9MKDHen^%^2B2D03ejGvILTTzLWNpDMfg^%^3D--3ufHOI9nRcIoFkyG--SG1OM062kAO02UiinQkGJA^%^3D^%^3D; eeny_meeny_personalized_upsell_module_v2=fsd^%^2BuG3OjZ8RSsmMqhXHmzvGIsoXTP^%^2FrsGe9Xc^%^2BqqnYiY9v7NRLUJhl6jGORrdVhx10Kiv^%^2B9hcmJXkT0EG0a1w^%^3D^%^3D; didomi_token=eyJ1c2VyX2lkIjoiMThlZTVjOTgtZmU3Yi02ODk2LWIxNmItZGY0YTUzZjQ1ODRiIiwiY3JlYXRlZCI6IjIwMjQtMDQtMTZUMDc6MjI6NTUuODQ3WiIsInVwZGF0ZWQiOiIyMDI0LTA0LTE2VDA3OjIyOjU3LjAzOVoiLCJ2ZW5kb3JzIjp7ImRpc2FibGVkIjpbImdvb2dsZSIsImFtYXpvbiIsImM6bWl4cGFuZWwiLCJjOmltcGFjdCIsImM6c3RlZWwtaG91c2UtbWVkaWEiLCJjOmdvb2dsZWFuYS00VFhuSmlnUiJdfSwicHVycG9zZXMiOnsiZGlzYWJsZWQiOlsiZGV2aWNlX2NoYXJhY3RlcmlzdGljcyIsImdlb2xvY2F0aW9uX2RhdGEiXX0sInZlbmRvcnNfbGkiOnsiZGlzYWJsZWQiOlsiZ29vZ2xlIiwiYzptaXhwYW5lbC0zMnFpRVlEcCIsImM6aGVhcC15N0VKcnpraSJdfSwicHVycG9zZXNfbGkiOnsiZGlzYWJsZWQiOlsiZGV2aWNlX2NoYXJhY3RlcmlzdGljcyIsImdlb19hZHMiXX0sInZlcnNpb24iOjIsImFjIjoiQUFBQS5BQUFBIn0=; euconsent-v2=CP9KXsAP9KXsAAHABBENAwEgAAAAAAAAAAZQAAAAAAAA.YAAAAAAAAAAA; recently_viewed=fKCWa6^%^2F8QC3yxPf1BdlDvECk2TzsKiNDtmBKrMPMI3BJdKjLNqmw0O1O46Hcoa^%^2Bd1I5It9rlRDmyCgCpZCcVshPD2FoMt7rZ3Mihl7gGFC9ZSZhqy^%^2FeHowu^%^2BYSVL2yRV3^%^2F^%^2Bm0hWv8rUZMU01LD13SnY9nvCoBRtNyL2GnnvHLwvlU9wQeRbvnbmOCet5DNtgZuOAl0PXLGoBOK8BpnpN^%^2BL9rc92hT38lAY38^%^2B4Ap^%^2FuVlBu6z9KWs5cVzkI4D4wgyVBjmsXBWI4Ofvm62WRJLgglXQ2WDeZq01ca26q8nHzhjd^%^2F^%^2BJCrzHwqY5iLcnDeDcXwrLOgQ3VdvsUQNbhINHl9HwkIB3OTBlRahSbjk5LsREjhwqPSU^%^2B^%^2Bg2OlNOC8A0QNR^%^2BWuEltl2QCC^%^2F3B1I^%^2FgdmFxdm^%^2BwBazHZyAx^%^2BU0A5cTwwNU1IsLUn9^%^2FcR^%^2BP1qfJ3ClY1gjOxFvR7Wb8ivcl6MbvEr34qufTuTfh01BHQpL1TgPVw0s5i1YgZPWXOHefawOE2s7hNbC6JeKX3B3^%^2FlkpI^%^3D--5YmBqcYHcfSn^%^2Bneh--f42cU3a3LEhO7M3kHXHL3Q^%^3D^%^3D; _ruby-web_session=hlS1xpeugTuRJhBPDmcQdisbLcdrQOZKiYchopF7N8IgMBDmPhqW4dJ06IoLpg%2FWjRcZNhOXxQze2TgsHIpOl5MnF5Gy03QDEyZKumobdTXo7jYttha24PMhHdF1RIeKZFl4aD%2BSd8KIwjqXIkP7SwcnAtFTQXRDuYJGf5TgR3HkvYEzGgG7Lgr2r62OiVjgnfDR7PFY4ottKviMKBQx1JtNELbfT4rymy94%2FhJttF3At%2FcfMUC6yFFcZfY4h2AaBSrvUNVL7zd%2FpY%2BtXocYAiv74z%2FOhdPBfOIHQIjalmNedc9ofQmyTpeBIQrzAhipFxxxEZMtlCILDDiUZn%2FFrhSxMdOdDDpIXqFVauaIUfSozBFjP3R7nExVALQD%2FUfodqUKqukwAEGYDznl7pwQjMAh491Q9HPUKsB8IBCBWaFPjV%2BP6zHe--pa03IT%2BazJD2Ua86--9ESDLu3deT36ylF%2BQvxFQw%3D%3D; csrf_token=vecL6_w4Rr6pJyauSiGR7A3ggKaAvoKsDfIpL-TF1-LcylC_WX78ZMoeRP1x27k0vCDSk48C8hNVurZ7RFTM6A",
     "Sec-Fetch-Dest": "empty",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
     "DNT": "1",
     "Sec-GPC": "1",
-    "If-None-Match": "W/8e2611eb5423e6d95087e34ef9d2061d",
+    "If-None-Match": "W/a31344f78b03f0283e113d63859c221c",
     "TE": "trailers",
 }
 
 response = requests.request("GET", url, headers=headers, data=payload)
 
-print(extract_keys(json.loads(response.text)))
-
-# save the response to a json file
-with open("wine.json", "w", encoding="utf-8") as f:
-    f.write(response.text)
+print(response.text)
