@@ -18,7 +18,7 @@ def construct_url(id):
 
 
 # Create an instance of ScraperClass
-vivino = ScraperClass(headless=True)
+vivino = ScraperClass(headless=False)
 
 # Get all ids from the json file
 ids = get_ids("wine.json")
