@@ -7,9 +7,9 @@ class ScraperClass:
     def __init__(self, headless=False):
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch(headless=headless)
+        self.page = self.browser.new_page()  # Initialize a new page here
 
     def scrape(self, url):
-        self.page = self.browser.new_page()
         self.page.goto(url)
         self.accept_cookies()
         page_type = self.check_type_page()
@@ -32,6 +32,7 @@ class ScraperClass:
         return result
 
     def quit_driver(self):
+        self.page.close()
         self.browser.close()
         self.playwright.stop()
 

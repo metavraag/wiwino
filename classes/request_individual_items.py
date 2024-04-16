@@ -27,7 +27,6 @@ ids = get_ids("wine.json")
 for id in ids:
     url = construct_url(id)
     print(url)
-    # Now call the scrape method
     scraped_object = vivino.scrape(url)
     print(scraped_object)
 
