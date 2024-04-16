@@ -3,6 +3,7 @@ import json
 from ScraperClassFile_file import ScraperClass
 
 
+# Still needs to be implemented
 def get_id(json_name):
     # read the json file
     with open(json_name, "r") as file:
