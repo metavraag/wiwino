@@ -19,13 +19,15 @@ def construct_url(id):
 
 url1 = construct_url(2978)
 url2 = construct_url(1606)
+url3 = construct_url(5259)
 
 print(url1)
 print(url2)
+print(url3)
 
 # Create an instance of ScraperClass
 vivino = ScraperClass()
 
 # Now call the scrape method
-scraped_object = vivino.scrape(url1)
+scraped_object = vivino.scrape(url3)
 print(scraped_object)

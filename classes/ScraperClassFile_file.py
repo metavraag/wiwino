@@ -23,8 +23,9 @@ class ScraperClass:
         # self.infinite_scroll()
         winery = self.get_wine_info()
         ratings = self.get_ratings()
+        average_price = self.get_price_average()
         self.driver.quit()
-        return ratings
+        return average_price
 
     def accept_cookies(self):
         try:
@@ -124,6 +125,65 @@ class ScraperClass:
             }
 
             return ratings
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
+    def get_price_promo(self):
+        try:
+            # Check if this is a promo page
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (
+                        By.CLASS_NAME,
+                        "purchaseAvailability__row--S-DoM purchaseAvailability__prices--1WNrU",
+                    )
+                )
+            )
+
+            # Extract the current price and normal_price
+            current_price = self.driver.find_element(
+                By.CLASS_NAME, "purchaseAvailability__currentPrice--3mO4u"
+            ).text
+            normal_price = self.driver.find_element(
+                By.CLASS_NAME,
+                "price_strike__mOVjZ purchaseAvailability__retailPrice--xisuR",
+            ).text
+
+            # Initialize a dictionary to store the data
+            price = {
+                "current_price": float(current_price),
+                "normal_price": float(normal_price),
+            }
+
+            return price
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
+    def get_price_average(self):
+        try:
+            # Check if this is a average external prices page
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (
+                        By.CLASS_NAME,
+                        "purchaseAvailabilityPPC__icon--3t84F",
+                    )
+                )
+            )
+
+            # Extract the current price and normal_price
+            average_price = self.driver.find_element(
+                By.CLASS_NAME, "purchaseAvailabilityPPC__amount--2_4GT"
+            ).text
+
+            # Initialize a dictionary to store the data
+            price = {
+                "current_price": average_price,
+            }
+
+            return price
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
