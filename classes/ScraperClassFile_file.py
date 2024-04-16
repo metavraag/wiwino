@@ -119,10 +119,10 @@ class ScraperClass:
 
             # Initialize a dictionary to store the data
             ratings = {
-                "review_score": float(review_score),
-                "total_reviews": int(
-                    total_reviews.split()[0]
-                ),  # Extract the number from the string
+                "review_score": review_score,
+                "total_reviews": total_reviews.split()[
+                    0
+                ],  # Extract the number from the string
             }
 
             return ratings
@@ -147,8 +147,8 @@ class ScraperClass:
 
             # Initialize a dictionary to store the data
             price = {
-                "current_price": float(current_price),
-                "normal_price": float(normal_price),
+                "current_price": current_price,
+                "normal_price": normal_price,
             }
 
             return price
@@ -171,7 +171,7 @@ class ScraperClass:
 
                 # Initialize a dictionary to store the data
                 price = {
-                    "average_price": float(average_price),
+                    "average_price": average_price,
                 }
 
                 return price
