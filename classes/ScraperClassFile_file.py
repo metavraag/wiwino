@@ -82,9 +82,9 @@ class ScraperClass:
     def get_wine_info(self):
         try:
             # Wait until the table is present
-            table = WebDriverWait(self.driver, 10).until(
+            table = WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
-                    (By.CLASS_NAME, "wineFacts__wineFacts--2Ih8B")
+                    (By.CSS_SELECTOR, ".wineFacts__wineFacts--2Ih8B")
                 )
             )
 
@@ -96,13 +96,10 @@ class ScraperClass:
 
             # Iterate over each row
             for row in rows:
-                # Find the key in the th element
-                key_element = row.find_element(By.TAG_NAME, "th")
-                key = key_element.text
-
-                # Find the value in the td element
-                value_element = row.find_element(By.TAG_NAME, "td")
-                value = value_element.text
+                # Find the key and value in the th and td elements
+                elements = row.find_elements(By.CSS_SELECTOR, "th, td")
+                key = elements[0].text
+                value = elements[1].text
 
                 # Add the key-value pair to the dictionary
                 wine_info[key] = value
