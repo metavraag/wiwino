@@ -22,8 +22,9 @@ class ScraperClass:
         self.accept_cookies()
         # self.infinite_scroll()
         winery = self.get_wine_info()
+        ratings = self.get_ratings()
         self.driver.quit()
-        return winery
+        return ratings
 
     def accept_cookies(self):
         try:
@@ -93,6 +94,36 @@ class ScraperClass:
                 wine_info[key] = value
 
             return wine_info
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
+    def get_ratings(self):
+        try:
+            # Wait until the table is present
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "vivinoRating_vivinoRating__RbvjH")
+                )
+            )
+
+            # Extract the review score and total reviews
+            review_score = self.driver.find_element(
+                By.CLASS_NAME, "vivinoRating_averageValue__uDdPM"
+            ).text
+            total_reviews = self.driver.find_element(
+                By.CLASS_NAME, "vivinoRating_caption__xL84P"
+            ).text
+
+            # Initialize a dictionary to store the data
+            ratings = {
+                "review_score": float(review_score),
+                "total_reviews": int(
+                    total_reviews.split()[0]
+                ),  # Extract the number from the string
+            }
+
+            return ratings
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
