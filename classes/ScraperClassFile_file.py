@@ -20,10 +20,9 @@ class ScraperClass:
     def scrape(self, url):
         self.driver.get(url)
         self.accept_cookies()
-        self.infinite_scroll()
-        winery = self.get_winery()
+        # self.infinite_scroll()
+        winery = self.get_wine_info()
         self.driver.quit()
-        # time.sleep(5)
         return winery
 
     def accept_cookies(self):
@@ -61,6 +60,39 @@ class ScraperClass:
                 EC.presence_of_element_located((By.CLASS_NAME, "winery"))
             )
             return element.text
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+
+    def get_wine_info(self):
+        try:
+            # Wait until the table is present
+            table = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "wineFacts__wineFacts--2Ih8B")
+                )
+            )
+
+            # Initialize an empty dictionary to store the data
+            wine_info = {}
+
+            # Find all rows in the table
+            rows = table.find_elements(By.TAG_NAME, "tr")
+
+            # Iterate over each row
+            for row in rows:
+                # Find the key in the th element
+                key_element = row.find_element(By.TAG_NAME, "th")
+                key = key_element.text
+
+                # Find the value in the td element
+                value_element = row.find_element(By.TAG_NAME, "td")
+                value = value_element.text
+
+                # Add the key-value pair to the dictionary
+                wine_info[key] = value
+
+            return wine_info
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
