@@ -32,8 +32,13 @@ class ScraperClass:
             print("Unknown page type")
             price = None
 
+        wine_info = self.get_wine_info()
+        ratings = self.get_ratings()
+
+        result = {"price": price, "wine_info": wine_info, "ratings": ratings}
+
         self.driver.quit()
-        return price
+        return result
 
     def accept_cookies(self):
         try:
