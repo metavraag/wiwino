@@ -115,19 +115,19 @@ class ScraperClass:
     def get_ratings(self):
         try:
             # Wait until the table is present
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
-                    (By.CLASS_NAME, "vivinoRating_vivinoRating__RbvjH")
+                    (By.CSS_SELECTOR, ".vivinoRating_vivinoRating__RbvjH")
                 )
             )
 
             # Extract the review score and total reviews
-            review_score = self.driver.find_element(
-                By.CLASS_NAME, "vivinoRating_averageValue__uDdPM"
-            ).text
-            total_reviews = self.driver.find_element(
-                By.CLASS_NAME, "vivinoRating_caption__xL84P"
-            ).text
+            elements = self.driver.find_elements(
+                By.CSS_SELECTOR,
+                ".vivinoRating_averageValue__uDdPM, .vivinoRating_caption__xL84P",
+            )
+            review_score = elements[0].text
+            total_reviews = elements[1].text
 
             # Initialize a dictionary to store the data
             ratings = {
