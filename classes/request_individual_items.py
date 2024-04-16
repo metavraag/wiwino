@@ -23,13 +23,19 @@ vivino = ScraperClass(headless=True)
 # Get all ids from the json file
 ids = get_ids("wine.json")
 
+# Define the maximum number of tabs
+max_tabs = 5
+
 # Loop over all ids
-for id in ids:
+for i, id in enumerate(ids):
     url = construct_url(id)
     print(url)
     # Now call the scrape method
-    scraped_object = vivino.scrape(url)
+    scraped_object = vivino.scrape(url, f"tab{i % max_tabs}")
     print(scraped_object)
+    # Close the tab and open a new one if max_tabs is reached
+    if (i + 1) % max_tabs == 0:
+        vivino.close_tab(f"tab{i % max_tabs}")
 
 # Quit the driver after all URLs have been scraped
 vivino.quit_driver()
