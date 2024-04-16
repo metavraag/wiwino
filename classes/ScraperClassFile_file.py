@@ -155,3 +155,29 @@ class ScraperClass:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
+
+    def get_price_average(self):
+        try:
+            # Check if this is an average external prices page
+            average_price_element = self.page.wait_for_selector(
+                ".purchaseAvailabilityPPC__icon--3t84F", timeout=10000
+            )
+
+            if average_price_element:
+                # Extract the average price
+                average_price = self.page.inner_text(
+                    ".purchaseAvailabilityPPC__amount--2_4GT"
+                )
+
+                # Initialize a dictionary to store the data
+                price = {
+                    "average_price": float(average_price),
+                }
+
+                return price
+            else:
+                print("Average price element not found")
+                return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
