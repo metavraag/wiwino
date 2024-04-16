@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
@@ -15,7 +15,12 @@ class ScraperClass:
         self.options = Options()
         self.options.headless = headless
 
-        self.driver = webdriver.Firefox(options=self.options)
+        try:
+            # Make sure the path to your chromedriver is correct
+            self.driver = webdriver.Chrome(options=self.options)
+        except Exception as e:
+            print(f"An error occurred while initializing the webdriver: {e}")
+            raise e
 
     def scrape(self, url):
         self.driver.get(url)
@@ -156,7 +161,7 @@ class ScraperClass:
 
         for by, value, page_type in elements:
             try:
-                WebDriverWait(self.driver, 10).until(
+                WebDriverWait(self.driver, 5).until(
                     EC.presence_of_element_located((by, value))
                 )
                 return page_type
