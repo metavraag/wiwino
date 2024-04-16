@@ -1,4 +1,5 @@
 from playwright.sync_api import sync_playwright
+from playwright.sync_api import TimeoutError
 from datetime import datetime
 import time
 
@@ -109,8 +110,12 @@ class ScraperClass:
     def get_ratings(self):
         try:
             # Extract the review score and total reviews
-            review_score = self.page.inner_text(".vivinoRating_averageValue__uDdPM")
-            total_reviews = self.page.inner_text(".vivinoRating_caption__xL84P")
+            review_score = self.page.inner_text(
+                ".vivinoRating_averageValue__uDdPM", timeout=5000
+            )  # 5 seconds timeout
+            total_reviews = self.page.inner_text(
+                ".vivinoRating_caption__xL84P", timeout=5000
+            )  # 5 seconds timeout
 
             # Initialize a dictionary to store the data
             ratings = {
@@ -121,6 +126,11 @@ class ScraperClass:
             }
 
             return ratings
+        except TimeoutError:
+            print(
+                "Timeout while trying to extract ratings. The element may not be present on the page."
+            )
+            return None
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
