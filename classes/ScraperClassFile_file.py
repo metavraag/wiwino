@@ -13,6 +13,7 @@ class ScraperClass:
     def scrape(self, url):
         self.page.goto(url)
         self.accept_cookies()
+        self.infinite_scroll()
         page_type = self.check_type_page()
 
         if page_type == "promo":
