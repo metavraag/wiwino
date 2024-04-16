@@ -43,8 +43,10 @@ class ScraperClass:
 
         result = {"price": price, "wine_info": wine_info, "ratings": ratings}
 
-        self.driver.quit()
         return result
+
+    def quit_driver(self):
+        self.driver.quit()
 
     def accept_cookies(self):
         try:

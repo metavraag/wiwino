@@ -3,12 +3,12 @@ import json
 from ScraperClassFile_file import ScraperClass
 
 
-# Still needs to be implemented
-def get_id(json_name):
+def get_ids(json_name):
     # read the json file
-    with open(json_name, "r") as file:
+    with open(json_name, "r", encoding="utf-8") as file:
         data = json.load(file)
-    return data["regions"][0]["id"]
+    # return all ids
+    return [region["id"] for region in data["regions"]]
 
 
 def construct_url(id):
@@ -17,17 +17,19 @@ def construct_url(id):
     return full_url
 
 
-url1 = construct_url(2978)
-url2 = construct_url(1606)
-url3 = construct_url(5259)
-
-print(url1)
-print(url2)
-print(url3)
-
 # Create an instance of ScraperClass
 vivino = ScraperClass(headless=True)
 
-# Now call the scrape method
-scraped_object = vivino.scrape(url1)
-print(scraped_object)
+# Get all ids from the json file
+ids = get_ids("wine.json")
+
+# Loop over all ids
+for id in ids:
+    url = construct_url(id)
+    print(url)
+    # Now call the scrape method
+    scraped_object = vivino.scrape(url)
+    print(scraped_object)
+
+# Quit the driver after all URLs have been scraped
+vivino.quit_driver()
