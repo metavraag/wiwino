@@ -52,8 +52,12 @@ def get_ids(json_name):
         data = json.load(file)
 
     # load the tastes.json file and extract the ids
-    with open("tastes.json", "r", encoding="utf-8") as tastes_file:
-        tastes_data = json.load(tastes_file)
+    with open("tastes.json", "a+", encoding="utf-8") as tastes_file:
+        tastes_file.seek(0)  # Go to the start of the file to read its contents
+        try:
+            tastes_data = json.load(tastes_file)
+        except json.JSONDecodeError:
+            tastes_data = []
     tastes_ids = [item["id"] for item in tastes_data]
 
     # return all ids that are not in the tastes.json file
@@ -69,7 +73,8 @@ for i in ids:
     response_data = {"id": i, "response": response}
 
     # Read the existing data
-    with open("tastes.json", "r", encoding="utf-8") as f:
+    with open("tastes.json", "a+", encoding="utf-8") as f:
+        f.seek(0)  # Go to the start of the file to read its contents
         try:
             existing_data = json.load(f)
         except json.JSONDecodeError:
