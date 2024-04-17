@@ -50,8 +50,16 @@ def get_ids(json_name):
     # read the json file
     with open(json_name, "r", encoding="utf-8") as file:
         data = json.load(file)
-    # return all ids
-    return [region["id"] for region in data["regions"]]
+
+    # load the tastes.json file and extract the ids
+    with open("tastes.json", "r", encoding="utf-8") as tastes_file:
+        tastes_data = json.load(tastes_file)
+    tastes_ids = [item["id"] for item in tastes_data]
+
+    # return all ids that are not in the tastes.json file
+    return [
+        region["id"] for region in data["regions"] if region["id"] not in tastes_ids
+    ]
 
 
 ids = get_ids("wine.json")
