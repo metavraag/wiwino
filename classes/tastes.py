@@ -1,4 +1,4 @@
-import requests
+import hrequests
 import json
 import time, random
 
@@ -26,7 +26,7 @@ def make_tastes_request(id):
         "TE": "trailers",
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = hrequests.request("GET", url, headers=headers, data=payload)
 
     if response.status_code == 200:
         # The request was successful, process the response

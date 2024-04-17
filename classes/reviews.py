@@ -1,6 +1,6 @@
-import requests
 import json
 import time, random
+import hrequests
 
 
 def make_reviews_request(id):
@@ -27,7 +27,7 @@ def make_reviews_request(id):
         "TE": "trailers",
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = hrequests.request("GET", url, headers=headers, data=payload)
 
     print(response.text)
 
