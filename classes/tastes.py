@@ -1,5 +1,6 @@
 import requests
 import json
+import time, random
 
 
 def make_tastes_request(id):
@@ -27,9 +28,22 @@ def make_tastes_request(id):
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    response_text = response.text
-    print(response_text)
-    return response.text
+    if response.status_code == 200:
+        # The request was successful, process the response
+        response_text = response.text
+        print(response_text)
+        return response.text
+    elif response.status_code == 429:
+        # We've hit the rate limit
+        retry_after = response.headers.get("Retry-After")
+        if retry_after:
+            # The 'Retry-After' header is present, pause execution for the specified number of seconds
+            time.sleep(int(retry_after))
+            # Retry the request
+            return make_tastes_request(url, headers, payload)
+    else:
+        # The request failed for some other reason
+        raise Exception(f"Request failed with status code {response.status_code}")
 
 
 def get_ids(json_name):
@@ -43,4 +57,23 @@ def get_ids(json_name):
 ids = get_ids("wine.json")
 
 for i in ids:
-    make_tastes_request(i)
+    response = make_tastes_request(i)
+    response_data = {"id": i, "response": response}
+
+    # Read the existing data
+    with open("tastes.json", "r", encoding="utf-8") as f:
+        try:
+            existing_data = json.load(f)
+        except json.JSONDecodeError:
+            existing_data = []
+
+    # Append the new response
+    existing_data.append(response_data)
+
+    # Write everything back
+    with open("tastes.json", "w", encoding="utf-8") as f:
+        json.dump(existing_data, f, ensure_ascii=False, indent=4)
+
+    # pause for a random amount of time between 1 and 5 seconds
+    # time.sleep(random.uniform(1, 5))
+    # time.sleep(2)
