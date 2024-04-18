@@ -58,11 +58,15 @@ def get_ids(json_name):
             tastes_data = json.load(tastes_file)
         except json.JSONDecodeError:
             tastes_data = []
+
     tastes_ids = [item["id"] for item in tastes_data]
 
-    # return all ids that are not in the tastes.json file
+    # return all ids that are not in the tastes.json file or have null structure and flavor
     return [
-        region["id"] for region in data["regions"] if region["id"] not in tastes_ids
+        region["id"] for region in data["regions"] 
+        if region["id"] not in tastes_ids or 
+        (region.get('response') and json.loads(region['response']).get('tastes', {}).get('structure') is None and 
+        json.loads(region['response']).get('tastes', {}).get('flavor') is None)
     ]
 
 
