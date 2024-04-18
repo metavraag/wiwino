@@ -71,7 +71,7 @@ def get_ids():
     ]
 
     # print the number of ids
-    print(f"There are {len(ids)} ids.")
+    print(f"Number of IDs: {len(ids)}")
 
     return ids
 

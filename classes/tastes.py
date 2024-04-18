@@ -61,13 +61,18 @@ def get_ids(json_name):
 
     tastes_ids = [item["id"] for item in tastes_data]
 
-    # return all ids that are not in the tastes.json file or have null structure and flavor
-    return [
+    # get all ids that are not in the tastes.json file or have null structure and flavor
+    ids = [
         region["id"] for region in data["regions"] 
         if region["id"] not in tastes_ids or 
         (region.get('response') and json.loads(region['response']).get('tastes', {}).get('structure') is None and 
         json.loads(region['response']).get('tastes', {}).get('flavor') is None)
     ]
+
+    # print the ids and their count
+    print(f"Number of IDs: {len(ids)}")
+
+    return ids
 
 
 ids = get_ids("wine.json")
