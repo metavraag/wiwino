@@ -64,12 +64,16 @@ def get_ids():
 
     reviews_ids = [item["id"] for item in reviews_data if json.loads(item["response"])["reviews"]]
 
-    # return all ids that are not in the reviews.json file and where reviews are empty
-    return [
+    # get all ids that are not in the reviews.json file and where reviews are empty
+    ids = [
         region["id"] for region in data["regions"] 
         if region["id"] not in reviews_ids or not json.loads(region["response"])["reviews"]
     ]
 
+    # print the number of ids
+    print(f"There are {len(ids)} ids.")
+
+    return ids
 
 ids = get_ids()
 
